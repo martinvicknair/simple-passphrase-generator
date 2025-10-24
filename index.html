@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simple Passphrase Generator</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --panel: #171923;
+        --muted: #8b97a7;
+        --fg: #e6ebf3;
+        --btn: #2e7ed1;
+        --border: #1f2637;
+        --panel2: #0e1118;
+        --accent-2: #7bd389;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          Cantarell, 'Helvetica Neue', Arial, Noto Sans;
+        background: radial-gradient(
+            1000px 600px at 20% -10%,
+            #1a2030 0,
+            #0f1115 60%
+          ),
+          var(--bg);
+        color: var(--fg);
+        min-height: 100dvh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .card {
+        width: min(980px, 100%);
+        background: linear-gradient(180deg, #181c26 0, #12131b 100%);
+        border: 1px solid #22293a;
+        border-radius: 18px;
+        padding: 24px;
+      }
+
+      h1 {
+        font-size: 20px;
+        margin: 0 0 4px;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .btn-block {
+        width: 100%;
+        display: block;
+        text-align: center;
+        appearance: none;
+        border: 1px solid #395f93;
+        background: var(--btn);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        margin: 12px 0 10px;
+      }
+
+      .listwrap {
+        max-height: 60vh;
+        overflow: auto;
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        padding: 8px;
+        margin-bottom: 8px;
+      }
+
+      .row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: var(--panel2);
+        border: 1px solid var(--border);
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      code.pass {
+        display: inline-block;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+          'Liberation Mono', monospace;
+        font-size: 18px;
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        cursor: pointer;
+      }
+
+      .copyhint {
+        font-size: 13px;
+        color: #9eb2c9;
+        margin: 6px 0 0 2px;
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      select {
+        background: var(--panel2);
+        color: var(--fg);
+        border: 1px solid #263049;
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-width: 90px;
+      }
+
+      @media (max-width: 600px) {
+        code.pass {
+          font-size: 17px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <h1>Simple Passphrase Generator</h1>
+      <div class="muted" style="text-align: center">
+        color + (animal | fruit) + digits
+      </div>
+
+      <button class="btn-block" id="generate">Generate</button>
+
+      <div class="listwrap">
+        <div id="list"></div>
+      </div>
+      <p class="copyhint" style="text-align: center">
+        Tip: click a passphrase to copy
+      </p>
+
+      <label
+        >Total characters
+        <select id="totalLen">
+          <option>10</option>
+          <option>11</option>
+          <option selected>12</option>
+          <option>13</option>
+          <option>14</option>
+          <option>15</option>
+        </select>
+      </label>
+      <div class="copyhint" style="text-align: center; padding-top: 20px">
+        <a
+          href="https://github.com/martinvicknair/simple-passphrase-generator"
+          target="_blank"
+          style="color: var(--muted); text-decoration: none; font-size: 12px"
+          >View source on GitHub</a
+        >
+      </div>
+    </div>
+
+    <script>
+      const COLORS = [
+        'blue',
+        'brown',
+        'gold',
+        'gray',
+        'green',
+        'navy',
+        'orange',
+        'pink',
+        'purple',
+        'red',
+        'silver',
+        'tan',
+        'yellow',
+      ];
+      const ANIMALS = [
+        'bee',
+        'cat',
+        'cow',
+        'crab',
+        'deer',
+        'dog',
+        'dolphin',
+        'donkey',
+        'duck',
+        'fish',
+        'fox',
+        'frog',
+        'goat',
+        'goose',
+        'horse',
+        'mouse',
+        'panda',
+        'penguin',
+        'rabbit',
+        'shark',
+        'sheep',
+        'skunk',
+        'snake',
+        'spider',
+        'tiger',
+        'turkey',
+        'turtle',
+        'whale',
+        'wolf',
+        'zebra',
+      ];
+      const FRUITS = [
+        'apple',
+        'apricot',
+        'avocado',
+        'banana',
+        'berry',
+        'cabbage',
+        'carrot',
+        'cherry',
+        'grape',
+        'guava',
+        'kiwi',
+        'lemon',
+        'lettuce',
+        'mango',
+        'onion',
+        'papaya',
+        'pear',
+        'plum',
+        'potato',
+        'raisin',
+        'spinach',
+        'tomato',
+      ];
+      const POOL_SECOND = [...ANIMALS, ...FRUITS];
+      const BANNED_SUBSTRINGS = ['obsceneWordsHere'];
+      const BANNED_NUMS = ['13', '69', '420', '666', '1488'];
+      const SEPARATORS = ['!', '@', '$', '%', '^', '&', '*', '+', '#', '-'];
+      const cryptoInt = (max) => {
+        const b = new Uint32Array(1);
+        let r;
+        do {
+          crypto.getRandomValues(b);
+          r = b[0];
+        } while (r >= Math.floor(0x100000000 / max) * max);
+        return r % max;
+      };
+      const pick = (a) => a[cryptoInt(a.length)];
+      const lettersOnly = (s) => s.toLowerCase().replace(/[^a-z]/g, '');
+      const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+      const hasBanned = (s) => {
+        s = s.toLowerCase();
+        return (
+          BANNED_SUBSTRINGS.some((b) => s.includes(b)) ||
+          BANNED_NUMS.some((n) => s.includes(n))
+        );
+      };
+
+      const buildWords = (n) => {
+        const w = [lettersOnly(pick(COLORS))];
+        for (let i = 1; i < n; i++) w.push(lettersOnly(pick(POOL_SECOND)));
+        return w;
+      };
+      const joinWords = (w, mode) =>
+        mode === 'separator' && w.length >= 2
+          ? w.join(pick(SEPARATORS))
+          : w[0] + w.slice(1).map(cap).join('');
+      const digitsOk = (n) => n >= 2 && n <= 4;
+
+      function makeOne(totalLen, mode) {
+        let k = 2;
+        for (let tries = 0; tries < 600; tries++) {
+          const words = buildWords(k);
+          const body = joinWords(words, mode);
+          let remain = totalLen - body.length;
+          if (!digitsOk(remain)) {
+            if (remain > 4 && k < 6) {
+              k++;
+              continue;
+            }
+            if (remain < 2 && k > 1) {
+              k--;
+              continue;
+            }
+          }
+          if (digitsOk(remain)) {
+            const digits = Array.from({ length: remain }, () =>
+              String(cryptoInt(10))
+            ).join('');
+            const pass = body + digits;
+            if (!hasBanned(pass)) return pass;
+          }
+        }
+        return '[no fit]';
+      }
+
+      const renderRow = (p) => {
+        const r = document.createElement('div');
+        r.className = 'row';
+        const c = document.createElement('code');
+        c.className = 'pass';
+        c.textContent = p;
+        c.title = 'Click to copy';
+        c.addEventListener('click', () => copy(p, c));
+        r.appendChild(c);
+        return r;
+      };
+      const copy = (t, e) =>
+        navigator.clipboard?.writeText(t).then(() => {
+          e.style.outline = '2px solid var(--accent-2)';
+          setTimeout(() => (e.style.outline = 'none'), 600);
+        });
+
+      function generate() {
+        const len = parseInt(document.getElementById('totalLen').value, 10);
+        const list = document.getElementById('list');
+        list.innerHTML = '';
+        const modes = ['camel', 'separator', 'camel', 'separator'];
+        for (const m of modes) list.appendChild(renderRow(makeOne(len, m)));
+      }
+
+      document.getElementById('generate').addEventListener('click', generate);
+      document.getElementById('totalLen').addEventListener('change', generate);
+      generate();
+    </script>
+  </body>
+</html>
