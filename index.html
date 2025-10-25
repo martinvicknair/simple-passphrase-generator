@@ -3,6 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A simple passphrase generator that combines a color, an animal or fruit, and a short string of digits to create easy-to-remember yet varied passwords."
+    />
     <title>Simple Passphrase Generator</title>
     <style>
       :root {
@@ -139,25 +143,25 @@
     <div class="card">
       <h1>Simple Passphrase Generator</h1>
       <div class="muted" style="text-align: center">
-        color + (animal | fruit) + digits
+        color + object + integer<br />
       </div>
 
       <button class="btn-block" id="generate">Generate</button>
 
       <div class="listwrap">
         <div id="list"></div>
+        <p class="copyhint" style="text-align: center">
+          Tip: click a passphrase to copy
+        </p>
       </div>
-      <p class="copyhint" style="text-align: center">
-        Tip: click a passphrase to copy
-      </p>
 
       <label
         >Total characters
         <select id="totalLen">
           <option>10</option>
           <option>11</option>
-          <option selected>12</option>
-          <option>13</option>
+          <option>12</option>
+          <option selected>13</option>
           <option>14</option>
           <option>15</option>
         </select>
@@ -173,81 +177,87 @@
     </div>
 
     <script>
-      const COLORS = [
+      const COLOR = [
         'blue',
         'brown',
         'gold',
-        'gray',
         'green',
-        'navy',
         'orange',
         'pink',
         'purple',
         'red',
         'silver',
-        'tan',
         'yellow',
       ];
       const ANIMALS = [
-        'bee',
+        'bear',
+        'bird',
         'cat',
+        'chicken',
         'cow',
-        'crab',
         'deer',
         'dog',
         'dolphin',
-        'donkey',
         'duck',
+        'elephant',
         'fish',
-        'fox',
         'frog',
         'goat',
         'goose',
         'horse',
+        'kitten',
+        'lion',
         'mouse',
         'panda',
         'penguin',
+        'puppy',
         'rabbit',
         'shark',
-        'sheep',
         'skunk',
-        'snake',
-        'spider',
         'tiger',
-        'turkey',
-        'turtle',
         'whale',
         'wolf',
         'zebra',
       ];
-      const FRUITS = [
+      const VEGETABLES = [
         'apple',
         'apricot',
         'avocado',
         'banana',
         'berry',
-        'cabbage',
         'carrot',
-        'cherry',
         'grape',
-        'guava',
-        'kiwi',
         'lemon',
-        'lettuce',
         'mango',
-        'onion',
-        'papaya',
         'pear',
         'plum',
         'potato',
         'raisin',
-        'spinach',
         'tomato',
+        'tree',
       ];
-      const POOL_SECOND = [...ANIMALS, ...FRUITS];
+      const MINERALS = [
+        'beach',
+        'bike',
+        'box',
+        'chair',
+        'circle',
+        'cloud',
+        'door',
+        'house',
+        'moon',
+        'phone',
+        'rock',
+        'square',
+        'star',
+        'table',
+        'triangle',
+      ];
+
+      const POOL_SECOND = [...ANIMALS, ...VEGETABLES, ...MINERALS];
       const BANNED_SUBSTRINGS = ['obsceneWordsHere'];
       const BANNED_NUMS = ['13', '69', '420', '666', '1488'];
-      const SEPARATORS = ['!', '@', '$', '%', '^', '&', '*', '+', '#', '-'];
+      const SEPARATORS = ['-', '_', '.', '+'];
       const cryptoInt = (max) => {
         const b = new Uint32Array(1);
         let r;
@@ -269,7 +279,7 @@
       };
 
       const buildWords = (n) => {
-        const w = [lettersOnly(pick(COLORS))];
+        const w = [lettersOnly(pick(COLOR))];
         for (let i = 1; i < n; i++) w.push(lettersOnly(pick(POOL_SECOND)));
         return w;
       };
