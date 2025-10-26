@@ -53,22 +53,30 @@ Banned substrings / numbers: BANNED_SUBSTRINGS, BANNED_NUMS
 
 Default minimum characters: set the <select> default option
 
+---
+
 🧪 Local Usage
 
 Just open simple-password-generator.html in a modern browser. No build tools needed.
+
+---
 
 🔌 Zendesk App (coming soon)
 
 This generator is being adapted as a Zendesk app for the ticket sidebar, with one-click copy or append to comment actions.
 
+---
+
 🏷️ GitHub Topics
 
 passphrase-generator, secure-password, memorable-password, csr-tools, web-crypto, password-generator, security-tools, vanilla-js, github-pages, offline-tools
 
+---
+
 📜 License
 
-Creative Commons Attribution 4.0 International (CC BY 4.0)
-© 2025 Martin Vicknair — You may share and adapt, including commercial use, with attribution.
+Creative Commons Attribution 4.0 International (CC BY 4.0)  
+© 2025 Martin Vicknair — You may share and adapt, including commercial use, with attribution.  
 Full text: https://creativecommons.org/licenses/by/4.0/
 
 If you reuse or adapt this project, please credit:
