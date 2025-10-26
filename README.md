@@ -43,7 +43,7 @@ Generate **NIST-compliant**, human-readable passphrases that are easy to say ove
 
 ---
 
-🔧 Customize
+## 🔧 Customize
 
 Open simple-password-generator.html and edit:
 
@@ -55,25 +55,25 @@ Default minimum characters: set the <select> default option
 
 ---
 
-🧪 Local Usage
+## 🧪 Local Usage
 
 Just open simple-password-generator.html in a modern browser. No build tools needed.
 
 ---
 
-🔌 Zendesk App (coming soon)
+## 🔌 Zendesk App (coming soon)
 
 This generator is being adapted as a Zendesk app for the ticket sidebar, with one-click copy or append to comment actions.
 
 ---
 
-🏷️ GitHub Topics
+## 🏷️ GitHub Topics
 
 passphrase-generator, secure-password, memorable-password, csr-tools, web-crypto, password-generator, security-tools, vanilla-js, github-pages, offline-tools
 
 ---
 
-📜 License
+## 📜 License
 
 Creative Commons Attribution 4.0 International (CC BY 4.0)  
 © 2025 Martin Vicknair — You may share and adapt, including commercial use, with attribution.  
