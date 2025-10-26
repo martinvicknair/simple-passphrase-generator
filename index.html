@@ -17,10 +17,9 @@
     </title>
     <meta
       name="description"
-      content="Generate secure, human-readable passphrases for customer support and temporary logins. Color + object + integer format, easy to read over the phone."
+      content="Generate NIST-compliant, human-readable passphrases for customer support and temporary logins. Color + object + integer format, easy to read over the phone."
     />
 
-    <!-- Optional: keywords -->
     <meta
       name="keywords"
       content="passphrase generator, secure passphrase, memorable password, temporary login, CSR password reset, phone verification"
@@ -54,23 +53,8 @@
       content="https://martinvicknair.github.io/simple-passphrase-generator/og-preview.png"
     />
 
-    <!-- Small polish -->
     <meta name="theme-color" content="#0f1115" />
     <meta name="robots" content="index,follow" />
-
-    <!-- JSON-LD (Schema.org) -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Simple Passphrase Generator",
-        "url": "https://martinvicknair.github.io/simple-passphrase-generator/",
-        "applicationCategory": "SecurityApplication",
-        "operatingSystem": "All",
-        "description": "Generate secure, human-readable passphrases for temporary account resets. CSR-friendly and easy to say over the phone.",
-        "creator": { "@type": "Person", "name": "Martin Vicknair" }
-      }
-    </script>
 
     <link rel="icon" href="favicon.png" type="image/png" />
 
@@ -119,7 +103,6 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.03);
       }
 
-      /* lead+pattern */
       #est {
         color: var(--subtle);
         font-size: 90%;
@@ -136,7 +119,6 @@
         color: var(--subtle);
       }
 
-      /* rows */
       .row {
         display: flex;
         justify-content: center;
@@ -207,7 +189,6 @@
         animation: glowFade 900ms ease-out;
       }
 
-      /* controls */
       .controls {
         display: grid;
         grid-template-columns: 1fr;
@@ -231,7 +212,6 @@
         outline: none;
       }
 
-      /* footer link */
       .source-link {
         display: block;
         text-align: center;
@@ -248,14 +228,12 @@
         text-decoration: underline;
       }
 
-      /* SEO section */
       .seo-info {
         max-width: 720px;
         margin: 14px auto 0;
         color: #c9d3e2;
         line-height: 1.6;
         font-size: 12px;
-        text-align: justify;
       }
       .seo-info h2 {
         font-size: 18px;
@@ -280,15 +258,10 @@
       <div class="panel">
         <h1>Simple Passphrase Generator</h1>
 
-        <!-- Dynamic estimate -->
         <p id="est"></p>
 
-        <!-- Pattern line -->
-        <p class="pattern">
-          <code>color + object + integer</code>
-        </p>
+        <p class="pattern"><code>color + object + integer</code></p>
 
-        <!-- Generate -->
         <div
           id="genRow"
           class="row action"
@@ -299,13 +272,11 @@
           Generate
         </div>
 
-        <!-- Output list + hint -->
         <section class="phrases" aria-label="Generated passphrases">
           <div id="list"></div>
           <p class="copyhint">Tip: click a passphrase to copy</p>
         </section>
 
-        <!-- Controls: minimum length only -->
         <div class="controls">
           <label for="minLen">
             Minimum characters
@@ -323,7 +294,6 @@
           </label>
         </div>
 
-        <!-- View source -->
         <p class="source-link">
           <a
             href="https://github.com/martinvicknair/simple-passphrase-generator"
@@ -335,10 +305,9 @@
         </p>
       </div>
 
-      <!-- Crawlable text for SEO -->
       <section class="seo-info" aria-label="About this generator">
-        <h2>About This Passphrase Generator</h2>
-        <p>
+        <h2 style="text-align: center">About This Passphrase Generator</h2>
+        <p style="text-align: justify">
           This browser-based passphrase generator creates NIST-compliant yet
           easy-to-remember login phrases using a simple formula:
           <strong>color + object + integer</strong>. It’s designed for customer
@@ -346,22 +315,21 @@
           entirely in your browser—no data is sent. Includes customizable word
           lists for flexibility.
         </p>
-        <p style="margin-top: 8px; color: #9eb7d1">
+        <p style="text-align: center; margin-top: 10px; color: #9eb7d1">
           <em>Available soon as a Zendesk app.</em>
         </p>
-        <noscript
-          ><p style="margin: 8px 0 0; color: #9eb7d1">
+        <noscript>
+          <p style="margin: 8px 0 0; color: #9eb7d1">
             Note: JavaScript is required to generate passphrases.
-          </p></noscript
-        >
+          </p>
+        </noscript>
       </section>
     </div>
 
     <script>
-      /* =========================================================================
-       *  CONSTANTS (edit lists here)
-       * ========================================================================= */
-
+      /* -------------------------------------------------------------------------
+       *  WORD LISTS
+       * ------------------------------------------------------------------------- */
       const COLOR = [
         'blue',
         'brown',
@@ -374,7 +342,6 @@
         'silver',
         'yellow',
       ];
-
       const ANIMALS = [
         'armadillo',
         'bat',
@@ -429,7 +396,6 @@
         'wolf',
         'zebra',
       ];
-
       const VEGETABLES = [
         'apple',
         'apricot',
@@ -460,7 +426,6 @@
         'tomato',
         'tree',
       ];
-
       const MINERALS = [
         'beach',
         'bike',
@@ -478,19 +443,17 @@
         'table',
         'triangle',
       ];
+      const OBJECTS = [...ANIMALS, ...VEGETABLES, ...MINERALS];
 
       const BANNED_SUBSTRINGS = ['obsceneWordsHere'];
       const BANNED_NUMS = ['13', '69', '420', '666', '1488'];
-
       const SEPARATORS_ALLOWED = ['.', '-'];
+
       let MIN_TOTAL_CHARS = 15; // default
 
-      const OBJECTS = [...ANIMALS, ...VEGETABLES, ...MINERALS];
-
-      /* =========================================================================
+      /* -------------------------------------------------------------------------
        *  HELPERS
-       * ========================================================================= */
-
+       * ------------------------------------------------------------------------- */
       function cryptoInt(max) {
         const b = new Uint32Array(1);
         let r;
@@ -519,23 +482,17 @@
         return false;
       }
 
-      /* =========================================================================
+      /* -------------------------------------------------------------------------
        *  GENERATION (first word always capitalized)
-       * ========================================================================= */
-
+       * ------------------------------------------------------------------------- */
       function buildPhraseNearMin(minChars) {
         const sep = randomSeparator();
         const words = [lettersOnly(pick(COLOR)), lettersOnly(pick(OBJECTS))];
-
-        // Always capitalize first word (policy: NIST-friendly, readable)
-        if (words[0].length)
-          words[0] = words[0][0].toUpperCase() + words[0].slice(1);
+        words[0] = words[0][0].toUpperCase() + words[0].slice(1);
 
         const baseLen = () => words.join(sep).length;
-
         while (true) {
           const base = baseLen();
-
           if (base + sep.length + 3 >= minChars) {
             const d = randomDigits(3);
             return words.join(sep) + sep + d;
@@ -544,9 +501,7 @@
             const d = randomDigits(4);
             return words.join(sep) + sep + d;
           }
-
           words.push(lettersOnly(pick(OBJECTS)));
-
           const base2 = baseLen();
           const meets3 = base2 + sep.length + 3 >= minChars;
           const meets4 = base2 + sep.length + 4 >= minChars;
@@ -568,10 +523,9 @@
         return '[no fit]';
       }
 
-      /* =========================================================================
+      /* -------------------------------------------------------------------------
        *  UI
-       * ========================================================================= */
-
+       * ------------------------------------------------------------------------- */
       function renderPassRow(text) {
         const row = document.createElement('div');
         row.className = 'row';
@@ -614,18 +568,14 @@
           list.appendChild(renderPassRow(generateOne(MIN_TOTAL_CHARS)));
       }
 
-      // --- Lightweight conservative estimator for arbitrary min chars (two-word only) ---
-      // Total length = len(color)+len(object)+2(seps)+digits
-      // For min m: 3 digits require L >= m-5; 4 digits require L >= m-6 (and < m-5)
+      // --- Conservative estimator for arbitrary min ---
       function estimateCombinations(minChars) {
         const colorLens = COLOR.map((w) => w.length);
         const objectLens = OBJECTS.map((w) => w.length);
-
         let pairs3 = 0,
           pairs4 = 0;
-        const need3 = minChars - 5; // L >= need3 → 3-digit OK
-        const need4 = minChars - 6; // L >= need4 → 4-digit OK
-
+        const need3 = minChars - 5,
+          need4 = minChars - 6;
         for (const cl of colorLens) {
           for (const ol of objectLens) {
             const L = cl + ol;
@@ -633,10 +583,9 @@
             else if (L >= need4) pairs4++;
           }
         }
-
         const seps = 2;
-        const threeDigitCombos = Math.floor(900 * 0.9); // ~10% off for bans
-        const fourDigitCombos = Math.floor(9000 * 0.9); // ~10% off for bans
+        const threeDigitCombos = Math.floor(900 * 0.9);
+        const fourDigitCombos = Math.floor(9000 * 0.9);
         return seps * (pairs3 * threeDigitCombos + pairs4 * fourDigitCombos);
       }
 
@@ -656,11 +605,8 @@
           )} unique phrases at ${MIN_TOTAL_CHARS}+ chars.`;
       }
 
-      // Wire up
       const genRow = document.getElementById('genRow');
-      genRow.addEventListener('click', () => {
-        generate();
-      });
+      genRow.addEventListener('click', generate);
       genRow.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
