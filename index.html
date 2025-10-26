@@ -516,11 +516,6 @@
        *  - Crypto-safe selection and small helpers used by the generator.
        * ========================================================================= */
 
-      /**
-       * Uniform integer in [0, max) using rejection sampling over crypto RNG.
-       * @param {number} max upper bound (exclusive)
-       * @returns {number}
-       */
       function cryptoInt(max) {
         const b = new Uint32Array(1);
         let r;
@@ -532,50 +527,24 @@
         return r % max;
       }
 
-      /**
-       * Pick a uniformly random element from an array.
-       * @template T
-       * @param {T[]} arr
-       * @returns {T}
-       */
       function pick(arr) {
         return arr[cryptoInt(arr.length)];
       }
 
-      /**
-       * Lowercase and strip non-letters for consistent, readable output.
-       * @param {string} s
-       * @returns {string}
-       */
       function lettersOnly(s) {
         return s.toLowerCase().replace(/[^a-z]/g, '');
       }
 
-      /**
-       * Choose one allowed separator ('.' or '-') per passphrase.
-       * @returns {string}
-       */
       function randomSeparator() {
         return pick(SEPARATORS_ALLOWED);
       }
 
-      /**
-       * Generate a digit string of given length where the first digit is 1–9.
-       * Prevents leading zero for phone readability.
-       * @param {number} len 3 or 4
-       * @returns {string}
-       */
       function randomDigits(len) {
         let s = String(1 + cryptoInt(9)); // first digit: 1–9
         for (let i = 1; i < len; i++) s += String(cryptoInt(10)); // remaining: 0–9
         return s;
       }
 
-      /**
-       * Apply substring bans to full phrase and trailing digits.
-       * @param {string} s full passphrase string
-       * @returns {boolean} true if banned
-       */
       function hasBanned(s) {
         const low = s.toLowerCase();
         if (BANNED_SUBSTRINGS.some((b) => b && low.includes(b))) return true;
@@ -623,18 +592,14 @@
        *  - Build passphrases near the target minimum with consistent separators.
        * ========================================================================= */
 
-      /**
-       * Build a single passphrase meeting or slightly exceeding the minimum:
-       *  color <sep> object [<sep> object ...] <sep> digits
-       *  - Start with color + 1 object.
-       *  - Try 3 digits; if short, try 4 digits; else add another object.
-       *  - When both 3 and 4 digits would meet min, choose smaller overshoot.
-       * @param {number} minChars minimum total characters
-       * @returns {string}
-       */
       function buildPhraseNearMin(minChars) {
         const sep = randomSeparator();
         const words = [lettersOnly(pick(COLOR)), lettersOnly(pick(OBJECTS))];
+
+        // optional capitalization of the first word (length unchanged)
+        if (CAPS_FIRST && words[0].length) {
+          words[0] = words[0][0].toUpperCase() + words[0].slice(1);
+        }
 
         const baseLen = () => words.join(sep).length;
 
@@ -666,27 +631,9 @@
           }
         }
       }
-      function buildPhraseNearMin(minChars) {
-        const sep = randomSeparator();
-        const words = [lettersOnly(pick(COLOR)), lettersOnly(pick(OBJECTS))];
-
-        // NEW: optional capitalization of the first word (length unchanged)
-        if (CAPS_FIRST && words[0].length) {
-          words[0] = words[0][0].toUpperCase() + words[0].slice(1);
-        }
-
-        if (CAPS_FIRST && words[0].length) {
-          words[0] = words[0][0].toUpperCase() + words[0].slice(1);
-        }
-
-        const baseLen = () => words.join(sep).length;
-        // ... (rest of your function unchanged)
-      }
 
       /**
        * Generate one valid (non-banned) passphrase, retrying if necessary.
-       * @param {number} minChars
-       * @returns {string}
        */
       function generateOne(minChars) {
         for (let i = 0; i < 800; i++) {
@@ -701,11 +648,6 @@
        *  - Minimal UI: Generate button, 4 results, and a single min-length control.
        * ========================================================================= */
 
-      /**
-       * Create a clickable passphrase row that copies to clipboard and pulses glow.
-       * @param {string} text
-       * @returns {HTMLDivElement}
-       */
       function renderPassRow(text) {
         const row = document.createElement('div');
         row.className = 'row';
@@ -718,11 +660,19 @@
         row.appendChild(span);
 
         const activate = () => {
-          navigator.clipboard?.writeText(text).then(() => {
+          const pulse = () => {
             row.classList.remove('glow'); // restart animation if clicked repeatedly
             void row.offsetWidth; // force reflow
             row.classList.add('glow');
-          });
+          };
+
+          const p =
+            navigator.clipboard?.writeText(text) ??
+            Promise.reject(new Error('Clipboard API unavailable'));
+
+          Promise.resolve(p)
+            .catch(() => {})
+            .finally(pulse);
         };
 
         row.addEventListener('click', activate);
@@ -738,9 +688,6 @@
 
       // --- Conservative, lightweight estimator for "12+ chars" combos ---
       function estimateCombinationsAt12() {
-        // 1) Count two-word pairs that meet 12+ with 3 or 4 digits
-        // Total length = len(color) + len(object) + 2 separators + digits
-        // 3 digits requires (color+object) >= 7; 4 digits requires (color+object) >= 6
         const colorLens = COLOR.map((w) => w.length);
         const objectLens = OBJECTS.map((w) => w.length);
 
@@ -752,19 +699,14 @@
             const L = cl + ol;
             if (L >= 7) pairs3++;
             else if (L === 6) pairs4++;
-            // If L <= 5, you'd need an extra object word; we ignore those to be conservative.
           }
         }
 
-        // 2) Separators: '.' or '-', one chosen per phrase (x2)
         const seps = 2;
 
-        // 3) Digits: 3-digit = 900 combos (100–999), 4-digit = 9000 (1000–9999)
-        // Apply a conservative discount for banned substrings (e.g., "13", "420", etc.)
         const threeDigitCombos = Math.floor(900 * 0.9); // ~10% off
         const fourDigitCombos = Math.floor(9000 * 0.9); // ~10% off
 
-        // 4) Total conservative estimate (two-word phrases only)
         const total =
           seps * (pairs3 * threeDigitCombos + pairs4 * fourDigitCombos);
         return total;
@@ -783,9 +725,6 @@
         if (el) el.textContent = `Over ${humanizeCount(n)} unique phrases`;
       }
 
-      /**
-       * Regenerate the list of suggestions using the current minimum length.
-       */
       function generate() {
         const minChars = parseInt(document.getElementById('minLen').value, 10);
         MIN_TOTAL_CHARS = minChars;
@@ -814,16 +753,15 @@
         savePrefs();
       });
 
-      // NEW: checkbox listener
       const capsEl = document.getElementById('capsFirst');
       capsEl.addEventListener('change', () => {
         CAPS_FIRST = capsEl.checked;
         savePrefs();
         generate();
       });
-      document.getElementById('minLen').addEventListener('change', generate);
 
       // Initial render on load.
+      loadPrefs(); // safe no-op unless DEV_USE_LOCAL_STORAGE === true
       updateEstimateLine();
       generate();
     </script>
