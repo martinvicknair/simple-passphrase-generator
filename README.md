@@ -1,143 +1,76 @@
 # Simple Passphrase Generator
 
-> Generate secure, human-readable passphrases — **color + object + integer** — designed for phone-friendly, temporary logins.  
-> Live app: [https://martinvicknair.github.io/simple-passphrase-generator/](https://martinvicknair.github.io/simple-passphrase-generator/)
+**Live app:** https://martinvicknair.github.io/simple-passphrase-generator/  
+**Source HTML (main branch):** `simple-password-generator.html`
+
+Generate **NIST-compliant**, human-readable passphrases that are easy to say over the phone — perfect for **temporary account resets** used by customer support reps.
+
+> Pattern: **color + object + integer**  
+> Examples: `Blue-horse-823`, `Green.cactus.4821`
 
 ---
 
-## ✳️ Overview
+## ✳️ Highlights
 
-The Simple Passphrase Generator builds short but strong passphrases using a simple readable pattern:
-
-> **color + object + integer**
-
-Examples:  
-blue-wolf-823  
-green.cactus.4832  
-orange-horse-213  
-
-Each phrase:
-- Uses a **random color** followed by one or more random **objects** (animals, vegetables, or minerals)
-- Appends a **3- or 4-digit integer** (no leading zero)
-- Chooses one consistent separator (`.` or `-`) per passphrase
-- Meets or slightly exceeds a user-set **minimum total length**
+- **Readable & phone-friendly:** simple words + punctuation + digits
+- **Meets most policies:** uppercase + lowercase + digits + `.`/`-` punctuation
+- **Configurable length:** dropdown **12–20** (default **15**)
+- **Crypto-random:** uses the browser’s **Web Crypto API**
+- **Client-side only:** runs entirely in the browser — **no data is sent**
+- **Copy to clipboard:** click any generated phrase (visual confirmation)
+- **Accessible UI:** keyboard support, ARIA roles, high contrast
+- **Customizable word lists:** edit arrays in the source
 
 ---
 
-## 🧠 Why It Exists
+## 🔐 Policy & Security Notes
 
-Typical password generators output unreadable strings (`Xq8$L0!`), which are impractical for over-the-phone resets or short-term access codes.  
-This tool balances **security** and **readability**:
+- First word is **always capitalized** (e.g., `Blue-…`) for clarity and to satisfy common “has uppercase” rules.
+- Punctuation is `.` or `-` (chosen per phrase), typically counted as **special characters** in modern policies.
+- A **3–4 digit integer** (no leading zero) is appended.
+- A conservative “Over **X** unique phrases at **N+** chars” estimate is shown and updates with the **Minimum characters** selection.
 
-- **Easy to pronounce** and confirm verbally  
-- **Memorable enough** for short sessions  
-- **Cryptographically random** (via Web Crypto API)  
-- **Client-side only** – nothing is sent or logged  
-
----
-
-## 🔐 Entropy & Combinations
-
-At the minimum 12-character setting:
-
-| Parameter | Value |
-|------------|-------|
-| Possible combinations | **≈ 1.47 million** |
-| Approximate entropy | **≈ 20.5 bits** |
-| Digits used | 3 – 4 digits (first 1–9) |
-| Word sources | 10 colors + 80 objects |
-| Separators | `.` or `-` |
-
-Longer minimums increase entropy proportionally.
+> This tool is designed for **temporary password resets** and short-term access — not as a long-term master password manager.
 
 ---
 
-## ⚙️ Features
+## 🧩 How It Works
 
-- Adjustable **minimum length** (12 – 20 chars)  
-- Fully **offline** — runs 100 % in your browser  
-- Copy-to-clipboard with visual feedback  
-- Randomly chosen consistent separator per phrase  
-- No leading zeros and filters banned numbers  
-- **Accessible:** keyboard-friendly, ARIA labels, high-contrast dark theme  
+- Start with `Color + Object`
+- Choose one separator for the whole phrase: `.` or `-`
+- Add **3** digits; if the **Minimum characters** requirement isn’t met, use **4** digits; if still short, add another **Object**
+- Filter phrases containing banned substrings or banned numbers (customizable)
 
 ---
 
-## 🧩 Tech & Implementation
+🔧 Customize
 
-- **HTML5 + Vanilla JS** only  
-- **Web Crypto API** for randomness  
-- **Static single-page app** hosted on GitHub Pages  
-- Inlined CSS for instant load  
+Open simple-password-generator.html and edit:
 
----
+Word lists (arrays at the top): COLOR, ANIMALS, VEGETABLES, MINERALS
 
-## 🧱 Structure
-simple-passphrase-generator/
-├── index.html # App UI and generator logic
-├── favicon.png # Optional browser icon
-├── og-preview.png # Social preview image
-├── sitemap.xml # SEO sitemap
-├── robots.txt # Crawl directives
-└── LICENSE # CC BY 4.0 license
+Banned substrings / numbers: BANNED_SUBSTRINGS, BANNED_NUMS
 
----
+Default minimum characters: set the <select> default option
 
-## 🚀 Deployment
+🧪 Local Usage
 
-This is a **one-page static app** — simply upload `index.html` (and optional image/icon files) to any web server or host it with **GitHub Pages**.
+Just open simple-password-generator.html in a modern browser. No build tools needed.
 
-- To rename or rebrand, edit the `<title>` and meta tags in the `<head>`.  
-- No build tools, database, or dependencies required.
+🔌 Zendesk App (coming soon)
 
----
+This generator is being adapted as a Zendesk app for the ticket sidebar, with one-click copy or append to comment actions.
 
-## 🔍 SEO & Discoverability
+🏷️ GitHub Topics
 
-Optimized with:
-- Canonical URL + meta description + keywords  
-- Open Graph & Twitter cards  
-- Schema.org `WebApplication` markup  
-- Sitemap + robots.txt  
-- Crawlable text section for keywords  
+passphrase-generator, secure-password, memorable-password, csr-tools, web-crypto, password-generator, security-tools, vanilla-js, github-pages, offline-tools
 
----
+📜 License
 
-## 🧑‍💻 Contributing
-
-Fork and modify freely:
-- Word lists in the **“Editable Constants”** section of `index.html`  
-- Banned substrings or numbers  
-- Default minimum length or UI text  
-
-Pull requests for UI, accessibility, or language support are welcome.
-
----
-
-## 📜 License
-
-**Creative Commons Attribution 4.0 International (CC BY 4.0)**  
-© 2025 [Martin Vicknair](https://github.com/martinvicknair)
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+© 2025 Martin Vicknair — You may share and adapt, including commercial use, with attribution.
+Full text: https://creativecommons.org/licenses/by/4.0/
 
 If you reuse or adapt this project, please credit:
 
-> *“Based on Simple Passphrase Generator by Martin Vicknair (CC BY 4.0)”*
-
----
-
-## 📸 Preview
-
-![Simple Passphrase Generator Screenshot](og-preview.png)
-
----
-
-### 🔑 Keywords
-
-`passphrase generator`, `secure password generator`, `memorable passphrase`,  
-`temporary login password`, `CSR support`, `phone verification`,  
-`offline password tool`, `Web Crypto API`, `secure temporary passwords`
-
----
-
-**Live app:** [https://martinvicknair.github.io/simple-passphrase-generator/](https://martinvicknair.github.io/simple-passphrase-generator/)
-
+“Based on Simple Passphrase Generator by Martin Vicknair (CC BY 4.0)”
