@@ -12,9 +12,9 @@ The Simple Passphrase Generator builds short but strong passphrases using a simp
 > **color + object + integer**
 
 Examples:
-blue-wolf-823
-green.cactus.4832
-orange-horse-213
+blue-wolf-823 
+green.cactus.4832 
+orange-horse-213 
 
 Each phrase:
 - Uses a **random color** followed by one or more random **objects** (animals, vegetables, or minerals)
