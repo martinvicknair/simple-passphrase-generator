@@ -325,6 +325,18 @@
               <option>20</option>
             </select>
           </label>
+          <label
+            for="capsFirst"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-top: 6px;
+            "
+          >
+            <input type="checkbox" id="capsFirst" />
+            <span>Capitalize first word</span>
+          </label>
         </div>
 
         <!-- View source -->
@@ -482,11 +494,22 @@
       // UI-exposed default minimum total characters (via dropdown).
       let MIN_TOTAL_CHARS = 13;
 
+      let CAPS_FIRST = false; // runtime state from the checkbox
+
       // Separators: exactly one of these is chosen per passphrase and reused throughout.
       const SEPARATORS_ALLOWED = ['.', '-'];
 
       // Combined non-color word pool used for object words.
       const OBJECTS = [...ANIMALS, ...VEGETABLES, ...MINERALS];
+
+      // Developer toggle: persist user defaults in localStorage (OFF by default)
+      const DEV_USE_LOCAL_STORAGE = false; // <-- set to true to enable persistence
+
+      // Keys for localStorage (used only if DEV_USE_LOCAL_STORAGE === true)
+      const LS_KEYS = {
+        minLen: 'spg_minLen',
+        capsFirst: 'spg_capsFirst',
+      };
 
       /* =========================================================================
        *  RANDOMNESS & UTILITIES
@@ -565,6 +588,36 @@
         return false;
       }
 
+      function loadPrefs() {
+        if (!DEV_USE_LOCAL_STORAGE) return;
+        try {
+          const sMin = localStorage.getItem(LS_KEYS.minLen);
+          const sCaps = localStorage.getItem(LS_KEYS.capsFirst);
+
+          if (sMin) {
+            const v = Math.min(20, Math.max(12, parseInt(sMin, 10) || 13));
+            const sel = document.getElementById('minLen');
+            if (sel) {
+              sel.value = String(v);
+              MIN_TOTAL_CHARS = v;
+            }
+          }
+          if (sCaps) {
+            CAPS_FIRST = sCaps === '1';
+            const cb = document.getElementById('capsFirst');
+            if (cb) cb.checked = CAPS_FIRST;
+          }
+        } catch (_) {}
+      }
+
+      function savePrefs() {
+        if (!DEV_USE_LOCAL_STORAGE) return;
+        try {
+          localStorage.setItem(LS_KEYS.minLen, String(MIN_TOTAL_CHARS));
+          localStorage.setItem(LS_KEYS.capsFirst, CAPS_FIRST ? '1' : '0');
+        } catch (_) {}
+      }
+
       /* =========================================================================
        *  CORE GENERATION LOGIC
        *  - Build passphrases near the target minimum with consistent separators.
@@ -612,6 +665,22 @@
             return words.join(sep) + sep + d;
           }
         }
+      }
+      function buildPhraseNearMin(minChars) {
+        const sep = randomSeparator();
+        const words = [lettersOnly(pick(COLOR)), lettersOnly(pick(OBJECTS))];
+
+        // NEW: optional capitalization of the first word (length unchanged)
+        if (CAPS_FIRST && words[0].length) {
+          words[0] = words[0][0].toUpperCase() + words[0].slice(1);
+        }
+
+        if (CAPS_FIRST && words[0].length) {
+          words[0] = words[0][0].toUpperCase() + words[0].slice(1);
+        }
+
+        const baseLen = () => words.join(sep).length;
+        // ... (rest of your function unchanged)
       }
 
       /**
@@ -737,6 +806,20 @@
           e.preventDefault();
           generate();
         }
+      });
+
+      const minSel = document.getElementById('minLen');
+      minSel.addEventListener('change', () => {
+        generate();
+        savePrefs();
+      });
+
+      // NEW: checkbox listener
+      const capsEl = document.getElementById('capsFirst');
+      capsEl.addEventListener('change', () => {
+        CAPS_FIRST = capsEl.checked;
+        savePrefs();
+        generate();
       });
       document.getElementById('minLen').addEventListener('change', generate);
 
