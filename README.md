@@ -1,19 +1,19 @@
 # Simple Passphrase Generator
 
-**Live app:** https://martinvicknair.github.io/simple-passphrase-generator/  
+**Live app:** [https://martinvicknair.github.io/simple-passphrase-generator/](https://martinvicknair.github.io/simple-passphrase-generator/)  
 **Source HTML (main branch):** `simple-password-generator.html`
 
 Generate **NIST-compliant**, human-readable passphrases that are easy to say over the phone — perfect for **temporary account resets** used by customer support reps.
 
-> Pattern: **color + object + integer**  
-> Examples: `Blue-horse-823`, `Green.cactus.4821`
+> **Pattern:** `color + object + integer`  
+> **Examples:** `Blue-horse-823`, `Green.cactus.4821`
 
 ---
 
 ## ✳️ Highlights
 
 - **Readable & phone-friendly:** simple words + punctuation + digits
-- **Meets most policies:** uppercase + lowercase + digits + `.`/`-` punctuation
+- **Meets most policies:** uppercase + lowercase + digits + `.` or `-` punctuation
 - **Configurable length:** dropdown **12–20** (default **15**)
 - **Crypto-random:** uses the browser’s **Web Crypto API**
 - **Client-side only:** runs entirely in the browser — **no data is sent**
@@ -45,40 +45,42 @@ Generate **NIST-compliant**, human-readable passphrases that are easy to say ove
 
 ## 🔧 Customize
 
-Open simple-password-generator.html and edit:
+Open `simple-password-generator.html` and edit:
 
-Word lists (arrays at the top): COLOR, ANIMALS, VEGETABLES, MINERALS
-
-Banned substrings / numbers: BANNED_SUBSTRINGS, BANNED_NUMS
-
-Default minimum characters: set the <select> default option
+- **Word lists:** `COLOR`, `ANIMALS`, `VEGETABLES`, `MINERALS`
+- **Banned substrings / numbers:** `BANNED_SUBSTRINGS`, `BANNED_NUMS`
+- **Default minimum characters:** set the `<select>` default option
 
 ---
 
 ## 🧪 Local Usage
 
-Just open simple-password-generator.html in a modern browser. No build tools needed.
+Just open `simple-password-generator.html` in a modern browser.  
+No build tools needed.
 
 ---
 
 ## 🔌 Zendesk App (coming soon)
 
-This generator is being adapted as a Zendesk app for the ticket sidebar, with one-click copy or append to comment actions.
+This generator is being adapted as a **Zendesk app** for the ticket sidebar,  
+with one-click **copy** or **append to comment** actions.
 
 ---
 
 ## 🏷️ GitHub Topics
 
-passphrase-generator, secure-password, memorable-password, csr-tools, web-crypto, password-generator, security-tools, vanilla-js, github-pages, offline-tools
+`passphrase-generator`, `secure-password`, `memorable-password`, `csr-tools`,  
+`web-crypto`, `password-generator`, `security-tools`, `vanilla-js`,  
+`github-pages`, `offline-tools`
 
 ---
 
 ## 📜 License
 
-Creative Commons Attribution 4.0 International (CC BY 4.0)  
+**Creative Commons Attribution 4.0 International (CC BY 4.0)**  
 © 2025 Martin Vicknair — You may share and adapt, including commercial use, with attribution.  
-Full text: https://creativecommons.org/licenses/by/4.0/
+Full text: [https://creativecommons.org/licenses/by/4.0/](https://creativecommons.org/licenses/by/4.0/)
 
 If you reuse or adapt this project, please credit:
 
-“Based on Simple Passphrase Generator by Martin Vicknair (CC BY 4.0)”
+> “Based on Simple Passphrase Generator by Martin Vicknair (CC BY 4.0)”
