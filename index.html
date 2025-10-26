@@ -291,7 +291,7 @@
             text-align: center;
           "
         >
-          <!-- will be filled on load, e.g., “Over 2.3 million unique phrases at 12+ chars.” -->
+          <!-- will be filled on load, e.g., “Over 2.3 million unique phrases” -->
         </p>
 
         <p class="lead">
@@ -719,10 +719,7 @@
       function updateEstimateLine() {
         const n = estimateCombinationsAt12();
         const el = document.getElementById('est');
-        if (el)
-          el.textContent = `Over ${humanizeCount(
-            n
-          )} unique phrases at 12+ chars.`;
+        if (el) el.textContent = `Over ${humanizeCount(n)} unique phrases`;
       }
 
       /**
