@@ -103,7 +103,6 @@
         margin: 0 auto;
         padding: 48px 16px 96px;
       }
-
       h1 {
         font-size: 28px;
         margin: 0 0 6px;
@@ -208,6 +207,30 @@
         animation: glowFade 900ms ease-out;
       }
 
+      /* controls */
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        align-items: start;
+      }
+      label {
+        color: #c9d3e2;
+        font-size: 14px;
+        display: block;
+      }
+      select {
+        width: 100%;
+        margin-top: 6px;
+        background: #0f1520;
+        border: 1px solid #2d3b54;
+        color: #eaeef5;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+        outline: none;
+      }
+
       /* footer link */
       .source-link {
         display: block;
@@ -281,6 +304,24 @@
           <div id="list"></div>
           <p class="copyhint">Tip: click a passphrase to copy</p>
         </section>
+
+        <!-- Controls: minimum length only -->
+        <div class="controls">
+          <label for="minLen">
+            Minimum characters
+            <select id="minLen">
+              <option>12</option>
+              <option>13</option>
+              <option>14</option>
+              <option selected>15</option>
+              <option>16</option>
+              <option>17</option>
+              <option>18</option>
+              <option>19</option>
+              <option>20</option>
+            </select>
+          </label>
+        </div>
 
         <!-- View source -->
         <p class="source-link">
@@ -438,9 +479,9 @@
       const BANNED_SUBSTRINGS = ['obsceneWordsHere'];
       const BANNED_NUMS = ['13', '69', '420', '666', '1488'];
 
-      // Fixed, minimalist policy
-      const MIN_TOTAL_CHARS = 13;
       const SEPARATORS_ALLOWED = ['.', '-'];
+      let MIN_TOTAL_CHARS = 15; // default
+
       const OBJECTS = [...ANIMALS, ...VEGETABLES, ...MINERALS];
 
       /* =========================================================================
@@ -570,20 +611,23 @@
           list.appendChild(renderPassRow(generateOne(MIN_TOTAL_CHARS)));
       }
 
-      // --- Conservative, lightweight estimator for "13+ chars" ---
-      // length = len(color)+len(object)+2(seps)+digits
-      // For 13+: 3 digits → L >= 8; 4 digits → L >= 7
-      function estimateCombinationsAt13() {
+      // --- Lightweight conservative estimator for arbitrary min chars (two-word only) ---
+      // Total length = len(color)+len(object)+2(seps)+digits
+      // For min m: 3 digits require L >= m-5; 4 digits require L >= m-6 (and < m-5)
+      function estimateCombinations(minChars) {
         const colorLens = COLOR.map((w) => w.length);
         const objectLens = OBJECTS.map((w) => w.length);
 
         let pairs3 = 0,
           pairs4 = 0;
+        const need3 = minChars - 5; // L >= need3 → 3-digit OK
+        const need4 = minChars - 6; // L >= need4 → 4-digit OK
+
         for (const cl of colorLens) {
           for (const ol of objectLens) {
             const L = cl + ol;
-            if (L >= 8) pairs3++;
-            else if (L === 7) pairs4++;
+            if (L >= need3) pairs3++;
+            else if (L >= need4) pairs4++;
           }
         }
 
@@ -601,17 +645,19 @@
       }
 
       function updateEstimateLine() {
-        const n = estimateCombinationsAt13();
+        const n = estimateCombinations(MIN_TOTAL_CHARS);
         const el = document.getElementById('est');
         if (el)
           el.textContent = `Over ${humanizeCount(
             n
-          )} unique phrases at 13+ chars.`;
+          )} unique phrases at ${MIN_TOTAL_CHARS}+ chars.`;
       }
 
       // Wire up
       const genRow = document.getElementById('genRow');
-      genRow.addEventListener('click', generate);
+      genRow.addEventListener('click', () => {
+        generate();
+      });
       genRow.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -619,7 +665,15 @@
         }
       });
 
+      const minSel = document.getElementById('minLen');
+      minSel.addEventListener('change', () => {
+        MIN_TOTAL_CHARS = parseInt(minSel.value, 10);
+        updateEstimateLine();
+        generate();
+      });
+
       // Initial render
+      MIN_TOTAL_CHARS = parseInt(minSel.value, 10) || 15;
       updateEstimateLine();
       generate();
     </script>
