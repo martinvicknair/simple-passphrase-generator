@@ -282,8 +282,14 @@
     <div class="wrap">
       <div class="panel">
         <h1>Simple Passphrase Generator</h1>
+        <p
+          id="est"
+          style="color: var(--subtle); font-size: 90%; margin: -6px 0 14px"
+        >
+          <!-- will be filled on load, e.g., “Over 2.3 million unique phrases at 12+ chars.” -->
+        </p>
+
         <p class="lead">
-          Memorable passphrases for temporary resets.
           <code style="display: block; text-align: center"
             >color + object + integer</code
           >
@@ -340,8 +346,8 @@
       <section class="seo-info" aria-label="About this generator">
         <h2>About This Passphrase Generator</h2>
         <p>
-          This online passphrase generator builds secure but easy-to-remember
-          login phrases using a simple formula:
+          This browser-based passphrase generator builds secure but
+          easy-to-remember login phrases using a simple formula:
           <strong>color + object + integer</strong>. It’s designed for customer
           support representatives handling temporary account resets where the
           phrase must be memorable and easy to read.
@@ -664,6 +670,56 @@
         return row;
       }
 
+      // --- Conservative, lightweight estimator for "12+ chars" combos ---
+      function estimateCombinationsAt12() {
+        // 1) Count two-word pairs that meet 12+ with 3 or 4 digits
+        // Total length = len(color) + len(object) + 2 separators + digits
+        // 3 digits requires (color+object) >= 7; 4 digits requires (color+object) >= 6
+        const colorLens = COLOR.map((w) => w.length);
+        const objectLens = OBJECTS.map((w) => w.length);
+
+        let pairs3 = 0; // two-word pairs that can hit 12 with 3 digits
+        let pairs4 = 0; // two-word pairs that can hit 12 with 4 digits
+
+        for (const cl of colorLens) {
+          for (const ol of objectLens) {
+            const L = cl + ol;
+            if (L >= 7) pairs3++;
+            else if (L === 6) pairs4++;
+            // If L <= 5, you'd need an extra object word; we ignore those to be conservative.
+          }
+        }
+
+        // 2) Separators: '.' or '-', one chosen per phrase (x2)
+        const seps = 2;
+
+        // 3) Digits: 3-digit = 900 combos (100–999), 4-digit = 9000 (1000–9999)
+        // Apply a conservative discount for banned substrings (e.g., "13", "420", etc.)
+        const threeDigitCombos = Math.floor(900 * 0.9); // ~10% off
+        const fourDigitCombos = Math.floor(9000 * 0.9); // ~10% off
+
+        // 4) Total conservative estimate (two-word phrases only)
+        const total =
+          seps * (pairs3 * threeDigitCombos + pairs4 * fourDigitCombos);
+        return total;
+      }
+
+      function humanizeCount(n) {
+        if (n >= 1e9) return `${Math.floor(n / 1e7) / 100} billion`;
+        if (n >= 1e6) return `${Math.floor(n / 1e4) / 100} million`;
+        if (n >= 1e3) return `${Math.floor(n / 10) / 100} thousand`;
+        return n.toLocaleString();
+      }
+
+      function updateEstimateLine() {
+        const n = estimateCombinationsAt12();
+        const el = document.getElementById('est');
+        if (el)
+          el.textContent = `Over ${humanizeCount(
+            n
+          )} unique phrases at 12+ chars.`;
+      }
+
       /**
        * Regenerate the list of suggestions using the current minimum length.
        */
@@ -691,6 +747,7 @@
       document.getElementById('minLen').addEventListener('change', generate);
 
       // Initial render on load.
+      updateEstimateLine();
       generate();
     </script>
   </body>
