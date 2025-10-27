@@ -1,8 +1,8 @@
-name: Deploy to production (GitHub Pages)
+name: Deploy to Production (GitHub Pages)
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -11,27 +11,32 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout main
+      - name: Checkout main branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Prepare dist folder
         run: |
           set -e
-          rm -rf dist
           mkdir -p dist
 
-          # Copy and rename the HTML for Pages
-          cp simple-password-generator.html dist/index.html
+          # Copy and rename main HTML
+          cp simple-passphrase-generator.html dist/index.html
 
-          # Copy static assets if present
-          [ -f robots.txt ] && cp robots.txt dist/
-          [ -f sitemap.xml ] && cp sitemap.xml dist/
-          [ -f favicon.png ] && cp favicon.png dist/
-          [ -f og-preview.png ] && cp og-preview.png dist/
+          # Copy static assets if they exist
+          for f in robots.txt sitemap.xml favicon.png og-preview.png; do
+            if [ -f "$f" ]; then
+              cp "$f" dist/
+              echo "✔ Copied $f"
+            else
+              echo "⚠️  $f not found, skipping"
+            fi
+          done
 
-          # Optional: ensure no Jekyll processing
+          # Prevent Jekyll from processing
           touch dist/.nojekyll
 
       - name: Deploy to production branch
